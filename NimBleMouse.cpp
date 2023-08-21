@@ -8,7 +8,7 @@
 #include "sdkconfig.h"
 
 #include "BleConnectionStatus.h"
-#include "BleMouse.h"
+#include "NimBleMouse.h"
 
 #if defined(CONFIG_ARDUHAL_ESP_LOG)
   #include "esp32-hal-log.h"
@@ -59,7 +59,7 @@ static const uint8_t _hidReportDescriptor[] = {
   END_COLLECTION(0)          // END_COLLECTION
 };
 
-BleMouse::BleMouse(std::string deviceName, std::string deviceManufacturer, uint8_t batteryLevel) : 
+NimBleMouse::NimBleMouse(std::string deviceName, std::string deviceManufacturer, uint8_t batteryLevel) : 
     _buttons(0),
     hid(0)
 {
@@ -69,16 +69,16 @@ BleMouse::BleMouse(std::string deviceName, std::string deviceManufacturer, uint8
   this->connectionStatus = new BleConnectionStatus();
 }
 
-void BleMouse::begin(void)
+void NimBleMouse::begin(void)
 {
   xTaskCreate(this->taskServer, "server", 20000, (void *)this, 5, NULL);
 }
 
-void BleMouse::end(void)
+void NimBleMouse::end(void)
 {
 }
 
-void BleMouse::click(uint8_t b)
+void NimBleMouse::click(uint8_t b)
 {
   _buttons = b;
   move(0,0,0,0);
@@ -86,7 +86,7 @@ void BleMouse::click(uint8_t b)
   move(0,0,0,0);
 }
 
-void BleMouse::move(signed char x, signed char y, signed char wheel, signed char hWheel)
+void NimBleMouse::move(signed char x, signed char y, signed char wheel, signed char hWheel)
 {
   if (this->isConnected())
   {
@@ -101,7 +101,7 @@ void BleMouse::move(signed char x, signed char y, signed char wheel, signed char
   }
 }
 
-void BleMouse::buttons(uint8_t b)
+void NimBleMouse::buttons(uint8_t b)
 {
   if (b != _buttons)
   {
@@ -110,35 +110,35 @@ void BleMouse::buttons(uint8_t b)
   }
 }
 
-void BleMouse::press(uint8_t b)
+void NimBleMouse::press(uint8_t b)
 {
   buttons(_buttons | b);
 }
 
-void BleMouse::release(uint8_t b)
+void NimBleMouse::release(uint8_t b)
 {
   buttons(_buttons & ~b);
 }
 
-bool BleMouse::isPressed(uint8_t b)
+bool NimBleMouse::isPressed(uint8_t b)
 {
   if ((b & _buttons) > 0)
     return true;
   return false;
 }
 
-bool BleMouse::isConnected(void) {
+bool NimBleMouse::isConnected(void) {
   return this->connectionStatus->connected;
 }
 
-void BleMouse::setBatteryLevel(uint8_t level) {
+void NimBleMouse::setBatteryLevel(uint8_t level) {
   this->batteryLevel = level;
   if (hid != 0)
       this->hid->setBatteryLevel(this->batteryLevel);
 }
 
-void BleMouse::taskServer(void* pvParameter) {
-  BleMouse* bleMouseInstance = (BleMouse *) pvParameter; //static_cast<BleMouse *>(pvParameter);
+void NimBleMouse::taskServer(void* pvParameter) {
+  NimBleMouse* bleMouseInstance = (NimBleMouse *) pvParameter; //static_cast<NimBleMouse *>(pvParameter);
   NimBLEDevice::init(bleMouseInstance->deviceName);
 
   NimBLEServer *pServer = NimBLEDevice::createServer();
@@ -167,6 +167,8 @@ void BleMouse::taskServer(void* pvParameter) {
   pAdvertising->addServiceUUID(bleMouseInstance->hid->hidService()->getUUID());
   pAdvertising->start();
   bleMouseInstance->hid->setBatteryLevel(bleMouseInstance->batteryLevel);
+  
+  pServer->advertiseOnDisconnect(true);
 
   ESP_LOGD(LOG_TAG, "Advertising started!");
   vTaskDelay(portMAX_DELAY); //delay(portMAX_DELAY);

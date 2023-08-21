@@ -1,5 +1,5 @@
-#ifndef ESP32_BLE_MOUSE_H
-#define ESP32_BLE_MOUSE_H
+#ifndef ESP32_NIMBLE_MOUSE_H
+#define ESP32_NIMBLE_MOUSE_H
 #include "sdkconfig.h"
 #if defined(CONFIG_BT_ENABLED)
 
@@ -14,7 +14,7 @@
 #define MOUSE_FORWARD 16
 #define MOUSE_ALL (MOUSE_LEFT | MOUSE_RIGHT | MOUSE_MIDDLE) # For compatibility with the Mouse library
 
-class BleMouse {
+class NimBleMouse {
 private:
   uint8_t _buttons;
   BleConnectionStatus* connectionStatus;
@@ -24,7 +24,7 @@ private:
   void rawAction(uint8_t msg[], char msgSize);
   static void taskServer(void* pvParameter);
 public:
-  BleMouse(std::string deviceName = "ESP32-Mouse", std::string deviceManufacturer = "Espressif", uint8_t batteryLevel = 100);
+  NimBleMouse(std::string deviceName = "ESP32-Mouse", std::string deviceManufacturer = "Espressif", uint8_t batteryLevel = 100);
   void begin(void);
   void end(void);
   void click(uint8_t b = MOUSE_LEFT);
@@ -42,4 +42,4 @@ protected:
 };
 
 #endif // CONFIG_BT_ENABLED
-#endif // ESP32_BLE_MOUSE_H
+#endif // ESP32_NIMBLE_MOUSE_H

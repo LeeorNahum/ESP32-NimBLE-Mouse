@@ -3,7 +3,7 @@
  */
 #include <BleMouse.h>
 
-BleMouse bleMouse;
+NimBleMouse bleMouse;
 
 void setup() {
   Serial.begin(115200);

@@ -1,6 +1,6 @@
 #include <BleMouse.h>
 
-BleMouse bleMouse("ESP32-MouseJiggler");
+NimBleMouse bleMouse("ESP32-MouseJiggler");
 
 static const int frequency = 60 * 5; // every 300secs
 
