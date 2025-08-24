@@ -160,6 +160,7 @@ void NimBleMouse::taskServer(void* pvParameter) {
   bleMouseInstance->onStarted(pServer);
 
   NimBLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising->setName(bleMouseInstance->deviceName);
   pAdvertising->setAppearance(HID_MOUSE);
   pAdvertising->addServiceUUID(bleMouseInstance->hid->getHidService()->getUUID());
   pAdvertising->start();
