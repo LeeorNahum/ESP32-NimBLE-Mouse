@@ -128,7 +128,7 @@ bool NimBleMouse::isPressed(uint8_t b)
 }
 
 bool NimBleMouse::isConnected(void) {
-  return this->connectionStatus->connected;
+  return NimBLEDevice::getServer()->getConnectedCount() > 0;
 }
 
 void NimBleMouse::setBatteryLevel(uint8_t level) {
